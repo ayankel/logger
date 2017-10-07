@@ -5,6 +5,7 @@ from elasticsearch import Elasticsearch,helpers
 from datetime import datetime
 import logging
 from sys import exc_info
+import traceback
 
 
 class eSSubmitter(Submitter):
@@ -49,8 +50,12 @@ class eSSubmitter(Submitter):
                 self.bulk_result = helpers.bulk(self.eS, self.actions, stats_only = False)
                 # helpers.parallel_bulk(self.eS, self.actions)
 
-            except:
+            except Exception, err:
                 logging.error("ERROR in elasticsearch BULK...")
+                print Exception, err
+                exc_info_data = exc_info()
+                traceback.print_exception(*exc_info_data )
+                del exc_info_data
                 #self.bulk_result = helpers.bulk(self.eS, self.actions, stats_only = False)
                 raise SubmitterError()
             
@@ -68,10 +73,14 @@ class eSSubmitter(Submitter):
         try:
             self.bulk_result = helpers.bulk(self.eS, self.actions, stats_only = False)
             helpers.parallel_bulk(self.eS, self.actions)
-        except:
+        except Exception, err:
             logging.error("ERROR in final elasticsearch BULK...")
             #self.bulk_result = helpers.bulk(self.eS, self.actions, stats_only = False)
-            
+            print Exception, err
+            exc_info_data = exc_info()
+            traceback.print_exception(*exc_info_data)
+            del exc_info_data
+
             raise SubmitterError()
         
         if(hasattr(self,'bulk_result')):    

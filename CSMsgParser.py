@@ -553,7 +553,12 @@ class CSMsgParser(LogParser):
                                     pc = self.cs_msg.find("IATRCFG_ERRORCODE")
                                     if pc != -1:
                                         pce = self.cs_msg.find('\n', pc + 37)
-                                        clientreqmsg['error_code'] = self.cs_msg[pc + 37:pce]
+                                        s = self.cs_msg[pc + 37:pce]
+                                        try:
+                                            int(s)
+                                        except:
+                                            s = '-1'
+                                        clientreqmsg['error_code'] = s
                                     else:
                                         clientreqmsg['error_code'] = -1
                                     pc = self.cs_msg.find("SATRCFG_DESCRIPTION")
